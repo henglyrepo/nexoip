@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NexoIP (NEXO)
 
-## Getting Started
+DB-less network diagnostics and utility tools built with Next.js (App Router) + TypeScript.
 
-First, run the development server:
+## Tools
+
+- IP Lookup: `/tools/ip`
+- WebRTC Leak Check: `/tools/webrtc`
+- DNS Lookup (DoH): `/tools/dns`
+- Port Scan (common ports): `/tools/ports`
+- WHOIS (RDAP): `/tools/whois`
+
+## API
+
+- Health: `GET /api/health`
+- Best-effort request IP + metadata: `GET /api/ip`
+- IP enrichment (public IPs only): `GET /api/ip/enrich?ip=8.8.8.8`
+- DNS over HTTPS (Google + Cloudflare): `GET /api/dns?name=example.com&type=A`
+- RDAP lookup (public IP or ASCII domain): `GET /api/rdap?q=8.8.8.8`
+- Safe request header echo (allowlist): `GET /api/headers`
+- Server-side TCP connect checks to your detected public IP: `GET /api/ports`
+
+Examples:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+curl -s http://localhost:3000/api/health | jq
+curl -s http://localhost:3000/api/ip | jq
+curl -s "http://localhost:3000/api/ip/enrich?ip=8.8.8.8" | jq
+curl -s "http://localhost:3000/api/dns?name=example.com&type=A" | jq
+curl -s "http://localhost:3000/api/rdap?q=example.com" | jq
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Optional: `IPINFO_TOKEN` (if set, `/api/ip/enrich` will use IPinfo Lite; otherwise it falls back to ipwho.is)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Development
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Other commands:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+npm run build
+npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- No database and no user accounts.
+- Privacy: header debug endpoint is allowlisted (never echoes cookies/authorization).

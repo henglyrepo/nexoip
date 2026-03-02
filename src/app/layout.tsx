@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "NEXO",
-  description: "Fast, DB-less diagnostics and utility tools.",
+  description:
+    "IP and network diagnostics: IP info, DNS, WebRTC leak checks, RDAP/WHOIS, and port tests. No signup.",
 };
 
 export default function RootLayout({

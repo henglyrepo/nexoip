@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CopyButton } from "@/components/ui/copy-button";
+import { DataValue } from "@/components/ui/data-value";
 
 type PortsResponse =
   | {
@@ -15,6 +17,12 @@ type PortsResponse =
       timestamp: string;
     }
   | { error: string };
+
+function isOkResponse(
+  data: PortsResponse | null
+): data is Exclude<PortsResponse, { error: string }> {
+  return !!data && !("error" in data);
+}
 
 export default function PortsToolPage() {
   const [loading, setLoading] = useState(false);
@@ -33,26 +41,32 @@ export default function PortsToolPage() {
   }
 
   const ok = data && !("error" in data);
+  const okData = isOkResponse(data) ? data : null;
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
       <Badge variant="secondary" className="mb-4">
         Tool
       </Badge>
-      <h1 className="text-3xl font-semibold tracking-tight">Port Scan (Common Ports)</h1>
+      <h1 className="text-3xl font-semibold tracking-tight nexo-animate-in">Port Scan (Common Ports)</h1>
       <p className="mt-2 text-muted-foreground">
         Runs a TCP connect check from our server to your public IP on a small list of common ports.
       </p>
 
-      <div className="mt-6">
+      <div className="mt-6 nexo-animate-in" style={{ animationDelay: "90ms" }}>
         <Button onClick={run} disabled={loading}>
           {loading ? "Scanning..." : "Start scan"}
         </Button>
       </div>
 
-      <Card className="mt-6">
+      <Card className="mt-6 nexo-animate-in" style={{ animationDelay: "140ms" }}>
         <CardHeader>
           <CardTitle>Result</CardTitle>
+          {okData ? (
+            <CardAction>
+              <CopyButton text={JSON.stringify(okData, null, 2)} label="Copy JSON" />
+            </CardAction>
+          ) : null}
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           {!data ? (
@@ -62,11 +76,20 @@ export default function PortsToolPage() {
           ) : (
             <>
               <div>
-                <span className="font-medium">Target IP:</span> {data.ip}
+                <span className="font-medium">Target IP:</span>{" "}
+                <DataValue value={data.ip} copyText={data.ip} monospace />
               </div>
               <div>
                 <span className="font-medium">Open ports:</span>{" "}
-                {data.opened.length ? data.opened.join(", ") : "None detected"}
+                {data.opened.length ? (
+                  <DataValue
+                    value={data.opened.join(", ")}
+                    copyText={data.opened.join(", ")}
+                    monospace
+                  />
+                ) : (
+                  "None detected"
+                )}
               </div>
               <div className="text-muted-foreground">{data.note}</div>
               <pre className="max-h-[520px] overflow-auto rounded-md border bg-muted p-3 text-xs">
@@ -77,7 +100,7 @@ export default function PortsToolPage() {
 
           {ok ? (
             <div className="text-muted-foreground">
-              Tip: If you’re behind NAT, your router/firewall policy controls what’s reachable.
+              Tip: If you are behind NAT, your router/firewall policy controls what is reachable.
             </div>
           ) : null}
         </CardContent>

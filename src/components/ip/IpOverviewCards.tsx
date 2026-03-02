@@ -1,6 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataValue } from "@/components/ui/data-value";
+import { Skeleton } from "@/components/ui/skeleton";
 import { type PublicIpInfo, usePublicIpInfo } from "@/components/ip/usePublicIpInfo";
 
 export function IpOverviewCards({
@@ -10,6 +12,13 @@ export function IpOverviewCards({
 }) {
   const info = usePublicIpInfo(initial);
 
+  const ipValue = info.ip;
+  const countryValue = info.country ?? info.countryCode;
+  const regionCityValue = (info.region || info.city) && !info.loading
+    ? `${info.region ?? ""}${info.city ? ` · ${info.city}` : ""}`.trim()
+    : null;
+  const ispValue = info.isp ?? info.org;
+
   return (
     <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Card>
@@ -17,7 +26,13 @@ export function IpOverviewCards({
           <CardTitle className="text-sm">IP Address</CardTitle>
         </CardHeader>
         <CardContent className="text-base font-medium">
-          {info.ip ?? (info.loading ? "Loading..." : "Unavailable")}
+          {ipValue ? (
+            <DataValue value={ipValue} copyText={ipValue} monospace />
+          ) : info.loading ? (
+            <Skeleton className="h-6 w-40" />
+          ) : (
+            "Unavailable"
+          )}
         </CardContent>
       </Card>
       <Card>
@@ -25,7 +40,13 @@ export function IpOverviewCards({
           <CardTitle className="text-sm">Country</CardTitle>
         </CardHeader>
         <CardContent className="text-base font-medium">
-          {info.country ?? info.countryCode ?? (info.loading ? "Loading..." : "Unknown")}
+          {countryValue ? (
+            <DataValue value={countryValue} copyText={countryValue} />
+          ) : info.loading ? (
+            <Skeleton className="h-6 w-28" />
+          ) : (
+            "Unknown"
+          )}
         </CardContent>
       </Card>
       <Card>
@@ -33,11 +54,13 @@ export function IpOverviewCards({
           <CardTitle className="text-sm">Region / City</CardTitle>
         </CardHeader>
         <CardContent className="text-base font-medium">
-          {(info.region || info.city) && !info.loading
-            ? `${info.region ?? ""}${info.city ? ` · ${info.city}` : ""}`.trim()
-            : info.loading
-              ? "Loading..."
-              : "Unknown"}
+          {regionCityValue ? (
+            <DataValue value={regionCityValue} copyText={regionCityValue} />
+          ) : info.loading ? (
+            <Skeleton className="h-6 w-44" />
+          ) : (
+            "Unknown"
+          )}
         </CardContent>
       </Card>
       <Card>
@@ -45,7 +68,13 @@ export function IpOverviewCards({
           <CardTitle className="text-sm">ISP / Org</CardTitle>
         </CardHeader>
         <CardContent className="text-base font-medium">
-          {info.isp ?? info.org ?? (info.loading ? "Loading..." : "Unknown")}
+          {ispValue ? (
+            <DataValue value={ispValue} copyText={ispValue} />
+          ) : info.loading ? (
+            <Skeleton className="h-6 w-56" />
+          ) : (
+            "Unknown"
+          )}
         </CardContent>
       </Card>
     </section>

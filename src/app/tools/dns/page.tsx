@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CopyButton } from "@/components/ui/copy-button";
 
 const TYPES = ["A", "AAAA", "CNAME", "MX", "NS", "SOA", "TXT", "PTR"] as const;
 
@@ -45,12 +46,12 @@ export default function DnsToolPage() {
       <Badge variant="secondary" className="mb-4">
         Tool
       </Badge>
-      <h1 className="text-3xl font-semibold tracking-tight">DNS Lookup (DoH)</h1>
+      <h1 className="text-3xl font-semibold tracking-tight nexo-animate-in">DNS Lookup (DoH)</h1>
       <p className="mt-2 text-muted-foreground">
         Queries Google and Cloudflare DNS-over-HTTPS and shows results side-by-side.
       </p>
 
-      <Card className="mt-6">
+      <Card className="mt-6 nexo-animate-in" style={{ animationDelay: "90ms" }}>
         <CardHeader>
           <CardTitle>Query</CardTitle>
         </CardHeader>
@@ -94,9 +95,14 @@ export default function DnsToolPage() {
         </CardContent>
       </Card>
 
-      <Card className="mt-4">
+      <Card className="mt-4 nexo-animate-in" style={{ animationDelay: "140ms" }}>
         <CardHeader>
           <CardTitle>Result</CardTitle>
+          {data ? (
+            <CardAction>
+              <CopyButton text={JSON.stringify(data, null, 2)} label="Copy JSON" />
+            </CardAction>
+          ) : null}
         </CardHeader>
         <CardContent className="text-sm">
           {data ? (

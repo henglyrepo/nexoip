@@ -31,43 +31,48 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-background">
       <main className="mx-auto max-w-5xl px-6 py-12 sm:px-8">
-        <section className="rounded-3xl border bg-card p-8 shadow-sm sm:p-10">
+        <section className="nexo-animate-in rounded-3xl border bg-card p-8 shadow-sm sm:p-10">
           <Badge variant="secondary" className="mb-4">
-            Next.js 16 + shadcn/ui
+            IP &amp; Network Checker
           </Badge>
           <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
-            NEXO tools with lightweight, fast UX
+            Check your IP. Diagnose your network.
           </h1>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            DB-less diagnostics platform. Server Components first, tiny client
-            islands only when browser APIs are required.
+            Check your public IP, location hints, and network signals in seconds.
+            Run DNS lookups, WebRTC leak checks, RDAP/WHOIS, and quick port
+            reachability tests - no signup.
           </p>
-           <div className="mt-6 flex flex-wrap gap-3">
-             <Button asChild>
-               <a href="/tools/ip">
-                 Open IP Tool
-                 <ArrowUpRight className="size-4" />
-               </a>
-             </Button>
-             <Button variant="outline" asChild>
-               <a href="/tools/webrtc">WebRTC Leak Check</a>
-             </Button>
-             <Button variant="outline" asChild>
-               <a href="/tools/dns">DNS Lookup</a>
-             </Button>
-             <Button variant="outline" asChild>
-               <a href="/tools/ports">Port Scan</a>
-             </Button>
-             <Button variant="outline" asChild>
-               <a href="/tools/whois">WHOIS (RDAP)</a>
-             </Button>
-             <Button variant="outline" asChild>
-               <a href="/api/health">API Health</a>
-             </Button>
-           </div>
-         </section>
+          <div
+            className="mt-6 flex flex-wrap gap-3 nexo-animate-in"
+            style={{ animationDelay: "70ms" }}
+          >
+            <Button asChild>
+              <a href="/tools/ip">
+                Open IP Tool
+                <ArrowUpRight className="size-4" />
+              </a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/tools/webrtc">WebRTC Leak Check</a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/tools/dns">DNS Lookup</a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/tools/ports">Port Scan</a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/tools/whois">WHOIS (RDAP)</a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/api/health">API Health</a>
+            </Button>
+          </div>
+        </section>
 
-        <IpOverviewCards
+        <div className="nexo-animate-in" style={{ animationDelay: "120ms" }}>
+          <IpOverviewCards
           initial={{
             ip: headerIp,
             countryCode: headerCountryCode,
@@ -76,9 +81,10 @@ export default async function Home() {
             city: headerCity,
             source: headerIp && isLikelyPublicIp(headerIp) ? "request-headers" : null,
           }}
-        />
+          />
+        </div>
 
-        <section className="mt-4">
+        <section className="mt-4 nexo-animate-in" style={{ animationDelay: "170ms" }}>
           <Card>
             <CardHeader>
               <CardTitle className="text-sm">User-Agent</CardTitle>
@@ -90,34 +96,34 @@ export default async function Home() {
         </section>
 
         <section className="mt-8 grid gap-4 sm:grid-cols-3">
-          <Card>
+          <Card className="nexo-animate-in" style={{ animationDelay: "210ms" }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Zap className="size-4" /> Fast by default
               </CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
-              Static pages + cached route handlers with short TTL.
+              Quick results with sensible caching and timeouts.
             </CardContent>
           </Card>
-          <Card>
+          <Card className="nexo-animate-in" style={{ animationDelay: "270ms" }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Gauge className="size-4" /> Minimal JS
               </CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
-              Client components only for WebRTC, fingerprint, and device checks.
+              Loads only what&apos;s needed - browser-only checks run only when you open them.
             </CardContent>
           </Card>
-          <Card>
+          <Card className="nexo-animate-in" style={{ animationDelay: "330ms" }}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <ShieldCheck className="size-4" /> Privacy-first
               </CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
-              No database, no accounts, no long-term user history.
+              No accounts. No database. No long-term history.
             </CardContent>
           </Card>
         </section>

@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CopyButton } from "@/components/ui/copy-button";
+import { DataValue } from "@/components/ui/data-value";
 
 type RdapResponse =
   | {
@@ -38,12 +40,12 @@ export default function WhoisToolPage() {
       <Badge variant="secondary" className="mb-4">
         Tool
       </Badge>
-      <h1 className="text-3xl font-semibold tracking-tight">WHOIS (RDAP)</h1>
+      <h1 className="text-3xl font-semibold tracking-tight nexo-animate-in">WHOIS (RDAP)</h1>
       <p className="mt-2 text-muted-foreground">
         Uses RDAP (modern WHOIS-over-HTTP). Supports public IPs and ASCII domains.
       </p>
 
-      <Card className="mt-6">
+      <Card className="mt-6 nexo-animate-in" style={{ animationDelay: "90ms" }}>
         <CardHeader>
           <CardTitle>Lookup</CardTitle>
         </CardHeader>
@@ -63,9 +65,14 @@ export default function WhoisToolPage() {
         </CardContent>
       </Card>
 
-      <Card className="mt-4">
+      <Card className="mt-4 nexo-animate-in" style={{ animationDelay: "140ms" }}>
         <CardHeader>
           <CardTitle>Result</CardTitle>
+          {data && !("error" in data) ? (
+            <CardAction>
+              <CopyButton text={JSON.stringify(data.data, null, 2)} label="Copy JSON" />
+            </CardAction>
+          ) : null}
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           {!data ? (
@@ -75,7 +82,8 @@ export default function WhoisToolPage() {
           ) : (
             <>
               <div>
-                <span className="font-medium">Source:</span> {data.sourceUrl}
+                <span className="font-medium">Source:</span>{" "}
+                <DataValue value={data.sourceUrl} copyText={data.sourceUrl} monospace />
               </div>
               <pre className="max-h-[520px] overflow-auto rounded-md border bg-muted p-3 text-xs">
                 {JSON.stringify(data.data, null, 2)}

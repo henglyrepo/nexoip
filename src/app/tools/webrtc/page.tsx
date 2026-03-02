@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataValue } from "@/components/ui/data-value";
+import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicIpInfo } from "@/components/ip/usePublicIpInfo";
 
 type CandidateHit = {
@@ -92,32 +94,44 @@ export default function WebrtcToolPage() {
       <Badge variant="secondary" className="mb-4">
         Tool
       </Badge>
-      <h1 className="text-3xl font-semibold tracking-tight">WebRTC Leak Check</h1>
+      <h1 className="text-3xl font-semibold tracking-tight nexo-animate-in">WebRTC Leak Check</h1>
       <p className="mt-2 text-muted-foreground">
         Checks whether your browser exposes IP addresses via WebRTC ICE candidates.
       </p>
 
-      <div className="mt-6 flex flex-wrap gap-3">
+      <div className="mt-6 flex flex-wrap gap-3 nexo-animate-in" style={{ animationDelay: "90ms" }}>
         <Button onClick={run} disabled={running}>
           {running ? "Running..." : "Run check"}
         </Button>
       </div>
 
-      <Card className="mt-6">
+      <Card className="mt-6 nexo-animate-in" style={{ animationDelay: "140ms" }}>
         <CardHeader>
           <CardTitle>Public IP (baseline)</CardTitle>
         </CardHeader>
         <CardContent className="text-sm">
           <div>
-            <span className="font-medium">IP:</span> {publicIp ?? (publicInfo.loading ? "Loading..." : "Unavailable")}
+            <span className="font-medium">IP:</span>{" "}
+            {publicIp ? (
+              <DataValue value={publicIp} copyText={publicIp} monospace />
+            ) : publicInfo.loading ? (
+              <Skeleton className="inline-block h-5 w-36 align-middle" />
+            ) : (
+              "Unavailable"
+            )}
           </div>
           <div className="mt-2 text-muted-foreground">
-            Source: {publicInfo.source ?? "-"}
+            Source:{" "}
+            {publicInfo.source ? (
+              <DataValue value={publicInfo.source} copyText={publicInfo.source} />
+            ) : (
+              "-"
+            )}
           </div>
         </CardContent>
       </Card>
 
-      <Card className="mt-4">
+      <Card className="mt-4 nexo-animate-in" style={{ animationDelay: "190ms" }}>
         <CardHeader>
           <CardTitle>ICE Candidates</CardTitle>
         </CardHeader>
@@ -129,7 +143,8 @@ export default function WebrtcToolPage() {
             <div className="space-y-1">
               {candidateIps.map((c, idx) => (
                 <div key={`${c.ip}-${c.typ}-${idx}`}>
-                  <span className="font-medium">{c.ip}</span> <span className="text-muted-foreground">({c.typ})</span>
+                  <DataValue value={c.ip} copyText={c.ip} monospace className="font-medium" />{" "}
+                  <span className="text-muted-foreground">({c.typ})</span>
                 </div>
               ))}
             </div>

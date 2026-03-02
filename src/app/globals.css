@@ -124,3 +124,68 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  :root {
+    --nexo-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --nexo-dur-1: 140ms;
+    --nexo-dur-2: 220ms;
+    --nexo-dur-3: 420ms;
+  }
+
+  @keyframes nexo-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes nexo-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes nexo-shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  .nexo-animate-in {
+    animation: nexo-fade-up var(--nexo-dur-2) var(--nexo-ease-out) both;
+  }
+
+  .nexo-fade-in {
+    animation: nexo-fade-in var(--nexo-dur-2) var(--nexo-ease-out) both;
+  }
+
+  .nexo-skeleton {
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--muted) 85%, transparent) 0%,
+      color-mix(in oklab, var(--muted) 55%, transparent) 50%,
+      color-mix(in oklab, var(--muted) 85%, transparent) 100%
+    );
+    background-size: 200% 100%;
+    animation: nexo-shimmer 1100ms linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nexo-animate-in,
+    .nexo-fade-in,
+    .nexo-skeleton {
+      animation: none !important;
+    }
+  }
+}

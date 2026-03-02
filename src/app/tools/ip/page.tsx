@@ -4,12 +4,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataValue } from "@/components/ui/data-value";
 import { Skeleton } from "@/components/ui/skeleton";
+import { countryCodeToFlagEmoji } from "@/lib/i18n/flags";
 
 import { usePublicIpInfo } from "@/components/ip/usePublicIpInfo";
 
 export default function IpToolPage() {
   const info = usePublicIpInfo();
   const timestamp = new Date().toISOString();
+  const countryFlag = countryCodeToFlagEmoji(info.countryCode);
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
@@ -42,10 +44,17 @@ export default function IpToolPage() {
           <div>
             <span className="font-medium">Country:</span>{" "}
             {info.country ?? info.countryCode ? (
-              <DataValue
-                value={info.country ?? info.countryCode ?? ""}
-                copyText={info.country ?? info.countryCode ?? undefined}
-              />
+              <span className="inline-flex max-w-full items-center gap-2 align-middle">
+                {countryFlag ? (
+                  <span aria-hidden="true" className="leading-none opacity-90">
+                    {countryFlag}
+                  </span>
+                ) : null}
+                <DataValue
+                  value={info.country ?? info.countryCode ?? ""}
+                  copyText={info.country ?? info.countryCode ?? undefined}
+                />
+              </span>
             ) : info.loading ? (
               <Skeleton className="inline-block h-5 w-24 align-middle" />
             ) : (

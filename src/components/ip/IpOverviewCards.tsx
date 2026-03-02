@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataValue } from "@/components/ui/data-value";
 import { Skeleton } from "@/components/ui/skeleton";
 import { type PublicIpInfo, usePublicIpInfo } from "@/components/ip/usePublicIpInfo";
+import { countryCodeToFlagEmoji } from "@/lib/i18n/flags";
 
 export function IpOverviewCards({
   initial,
@@ -13,6 +14,7 @@ export function IpOverviewCards({
   const info = usePublicIpInfo(initial);
 
   const ipValue = info.ip;
+  const countryFlag = countryCodeToFlagEmoji(info.countryCode);
   const countryValue = info.country ?? info.countryCode;
   const regionCityValue = (info.region || info.city) && !info.loading
     ? `${info.region ?? ""}${info.city ? ` · ${info.city}` : ""}`.trim()
@@ -41,7 +43,14 @@ export function IpOverviewCards({
         </CardHeader>
         <CardContent className="text-base font-medium">
           {countryValue ? (
-            <DataValue value={countryValue} copyText={countryValue} />
+            <span className="inline-flex max-w-full items-center gap-2">
+              {countryFlag ? (
+                <span aria-hidden="true" className="leading-none opacity-90">
+                  {countryFlag}
+                </span>
+              ) : null}
+              <DataValue value={countryValue} copyText={countryValue} />
+            </span>
           ) : info.loading ? (
             <Skeleton className="h-6 w-28" />
           ) : (

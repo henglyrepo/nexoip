@@ -66,6 +66,15 @@ export default async function Home() {
               <a href="/tools/whois">WHOIS (RDAP)</a>
             </Button>
             <Button variant="outline" asChild>
+              <a href="/tools/password">Password Exposure</a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/tools/breaches">Domain Breaches</a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/tools/email-security">Email Security</a>
+            </Button>
+            <Button variant="outline" asChild>
               <a href="/api/health">API Health</a>
             </Button>
           </div>

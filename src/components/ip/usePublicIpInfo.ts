@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 
 type IpApi = {
   ip: string | null;
+  // Note: `/api/ip` returns a country *code* here.
   country: string | null;
+  region?: string | null;
+  city?: string | null;
+  timezone?: string | null;
   isPublicIp?: boolean;
 };
 
@@ -42,6 +46,16 @@ async function getJson<T>(url: string): Promise<T> {
   return (await r.json()) as T;
 }
 
+function countryNameFromCode(code: string | null): string | null {
+  if (!code) return null;
+  try {
+    const dn = new Intl.DisplayNames(["en"], { type: "region" });
+    return dn.of(code) ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function usePublicIpInfo(initial?: Partial<PublicIpInfo>): PublicIpInfo {
   const [state, setState] = useState<PublicIpInfo>({
     ip: initial?.ip ?? null,
@@ -62,19 +76,24 @@ export function usePublicIpInfo(initial?: Partial<PublicIpInfo>): PublicIpInfo {
     let cancelled = false;
 
     async function run() {
+      let finalError: string | null = null;
       try {
         const api = await getJson<IpApi>("/api/ip");
         if (cancelled) return;
 
         const headerIp = api.ip;
-        const headerCountry = api.country;
+        const headerCountryCode = api.country;
+        const headerCountryName = countryNameFromCode(headerCountryCode);
         const headerIsPublic = api.isPublicIp === true;
 
         setState((s) => ({
           ...s,
           ip: s.ip ?? headerIp,
-          countryCode: s.countryCode,
-          country: s.country ?? headerCountry,
+          countryCode: s.countryCode ?? headerCountryCode,
+          country: s.country ?? headerCountryName,
+          region: s.region ?? api.region ?? null,
+          city: s.city ?? api.city ?? null,
+          timezone: s.timezone ?? api.timezone ?? null,
           source: s.source ?? "request-headers",
         }));
 
@@ -90,29 +109,34 @@ export function usePublicIpInfo(initial?: Partial<PublicIpInfo>): PublicIpInfo {
         }
 
         if (ip) {
-          const enrich = await getJson<IpEnrich>(
-            `/api/ip/enrich?ip=${encodeURIComponent(ip)}`
-          );
-          if (cancelled) return;
-          setState((s) => ({
-            ...s,
-            ip: enrich.ip ?? s.ip,
-            countryCode: enrich.countryCode ?? s.countryCode,
-            country: enrich.country ?? s.country,
-            region: enrich.region ?? s.region,
-            city: enrich.city ?? s.city,
-            timezone: enrich.timezone ?? s.timezone,
-            asn: enrich.asn ?? s.asn,
-            org: enrich.org ?? s.org,
-            isp: enrich.isp ?? s.isp,
-            source: enrich.source ?? s.source,
-          }));
+          try {
+            const enrich = await getJson<IpEnrich>(
+              `/api/ip/enrich?ip=${encodeURIComponent(ip)}`
+            );
+            if (cancelled) return;
+            setState((s) => ({
+              ...s,
+              ip: enrich.ip ?? s.ip,
+              countryCode: enrich.countryCode ?? s.countryCode,
+              country: enrich.country ?? s.country,
+              region: enrich.region ?? s.region,
+              city: enrich.city ?? s.city,
+              timezone: enrich.timezone ?? s.timezone,
+              asn: enrich.asn ?? s.asn,
+              org: enrich.org ?? s.org,
+              isp: enrich.isp ?? s.isp,
+              source: enrich.source ?? s.source,
+            }));
+          } catch {
+            finalError = "Enrichment unavailable";
+          }
         }
-
-        setState((s) => ({ ...s, loading: false }));
       } catch {
         if (cancelled) return;
-        setState((s) => ({ ...s, loading: false, error: "Failed to load IP" }));
+        finalError = "Failed to load IP";
+      } finally {
+        if (cancelled) return;
+        setState((s) => ({ ...s, loading: false, error: s.error ?? finalError }));
       }
     }
 
